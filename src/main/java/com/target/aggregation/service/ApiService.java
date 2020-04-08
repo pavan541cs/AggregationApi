@@ -4,6 +4,8 @@ import com.target.aggregation.config.ApiConfiguration;
 import com.target.aggregation.model.Price;
 import com.target.aggregation.model.PriceObject;
 import com.target.aggregation.model.Product;
+import com.target.aggregation.utils.PriceApiClient;
+import com.target.aggregation.utils.ProductApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -16,17 +18,19 @@ public class ApiService {
     @Autowired
     ApiConfiguration apiConfiguration;
 
-    RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    ProductApiClient productApiClient;
+
+    @Autowired
+    PriceApiClient priceApiClient;
 
     @Async
     public CompletableFuture<Product> getProductById(String id) {
-        String url = apiConfiguration.getProductApi() + "/api/v1/product/" + id;
-        return CompletableFuture.completedFuture(restTemplate.getForObject(url, Product.class));
+        return CompletableFuture.completedFuture(productApiClient.findProductById(id));
     }
 
     @Async
     public CompletableFuture<PriceObject> getPriceById(String id) {
-        String url = apiConfiguration.getPriceApi() + "/api/v1/price/" + id;
-        return CompletableFuture.completedFuture(restTemplate.getForObject(url, PriceObject.class));
+        return CompletableFuture.completedFuture(priceApiClient.findPriceById(id));
     }
 }
